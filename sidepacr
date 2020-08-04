@@ -1,0 +1,64 @@
+#!/usr/bin/lua
+
+function fileExists(fileName)
+    local fileExists = io.open(fileName, "r")
+
+    if fileExists==nil then
+        return false
+    else
+        return true
+    end
+end
+
+print("Simple DEB Package Creator")
+print("Prerequisites: checkinstall")
+print("Run this from the directory of the script or executable | ctrl+c to quit")
+
+theFile = arg[1]
+
+if theFile==nil then
+    print("Name of the script/executable?:")
+    theFile = io.read()
+end
+
+if not fileExists(theFile) then
+    print("File "..theFile.." does not exist or could not be opened.")
+    os.exit()
+end
+
+Makefile = "Makefile"
+
+lines = {
+        "\tfi;",
+        "\t\tPATH=\"$$HOME/bin:$$PATH\"; \\",
+        "\tif [ -d \"$$HOME/bin\" ]; then \\",
+        "\tchmod u+x $$HOME/bin/"..theFile..";\\",
+        "\tcp "..theFile.." $$HOME/bin/"..theFile.."; \\",
+        "\tfi; \\",
+        "\t\tmkdir $$HOME/bin; \\",
+        "\t@if ! [ -d \"$$HOME/bin\" ] ; then \\",
+        "install: "..theFile
+    }
+
+
+if not fileExists(Makefile) then
+    os.execute("touch Makefile")
+end
+
+for k in pairs(lines) do
+    os.execute("echo '"..lines[k].."' | cat - Makefile > temp && mv temp Makefile")
+end
+
+os.execute("clear")
+print("..Running checkinstall..")
+print("1. Type Y to generate a doc-pak directory")
+print("2. You will need to enter a description")
+print("3. Type 2 to change the name of your package")
+print("4. Type 10 to add prerequisites")
+print("5. Type N to prevent listing exclusions")
+print("6. Type N to prevent excluding files")
+print("Press Enter to continue")
+io.read()
+
+os.execute("checkinstall")
+

@@ -1,0 +1,1 @@
+Wrapper for checkinstall that generates a Makefile and installs a script or singlefile executable into the user's bin (/home/$USER/bin) directory so sudo is required to install but not to run. Adds the user's bin directory to the Path if It is not already.
